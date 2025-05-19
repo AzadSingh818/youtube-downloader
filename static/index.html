@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>YouTube Audio Downloader</title>
+  <style>
+    body { font-family: Arial; max-width: 600px; margin: auto; padding: 20px; }
+    input, button { width: 100%; padding: 10px; margin: 10px 0; }
+    #response { margin-top: 15px; color: green; }
+    a { display: block; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h2>YouTube Audio Downloader</h2>
+  <input type="text" id="urlInput" placeholder="Paste YouTube link here..." />
+  <button onclick="download()">Download Audio</button>
+  <div id="response"></div>
+
+  <script>
+    async function download() {
+      const url = document.getElementById("urlInput").value;
+      const responseDiv = document.getElementById("response");
+      responseDiv.innerHTML = "⏳ Processing...";
+
+      const res = await fetch("/download", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        responseDiv.innerHTML = `
+          ✅ ${data.message}<br>
+          <a href="/file/${data.file}" download>Click here to download</a>
+        `;
+      } else {
+        responseDiv.innerHTML = `❌ Error: ${data.error}`;
+      }
+    }
+  </script>
+</body>
+</html>
